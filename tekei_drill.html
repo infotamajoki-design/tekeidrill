@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ます形 → て形 変換ドリル</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Hiragino Sans',sans-serif;background:#f5f4f0;color:#1a1a1a;padding:1.5rem;max-width:680px;margin:0 auto}
+.header{padding:1.5rem 0 1rem;border-bottom:1px solid #e0ddd5;margin-bottom:1.5rem}
+.header h2{font-size:20px;font-weight:500;margin-bottom:4px}
+.header p{font-size:13px;color:#666}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.5rem}
+.stat{background:#eeecea;border-radius:8px;padding:0.75rem;text-align:center}
+.stat-label{font-size:12px;color:#888;margin-bottom:4px}
+.stat-num{font-size:22px;font-weight:500;color:#1a1a1a}
+.card{background:#fff;border:1px solid #e0ddd5;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+.group-badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:8px;margin-bottom:1rem;font-weight:500}
+.g1{background:#e6f1fb;color:#185fa5}
+.g2{background:#eaf3de;color:#3b6d11}
+.g3{background:#faeeda;color:#854f0b}
+.masu{font-size:28px;font-weight:500;margin-bottom:4px}
+.meaning{font-size:14px;color:#888;margin-bottom:1.25rem}
+.input-row{display:flex;gap:8px;align-items:center}
+.input-row input{flex:1;font-size:20px;padding:8px 12px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#1a1a1a;outline:none}
+.input-row input:focus{box-shadow:0 0 0 2px #b5d4f4}
+.btn{padding:8px 20px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#1a1a1a;font-size:14px;cursor:pointer}
+.btn:hover{background:#f0eeea}
+.btn:active{transform:scale(0.98)}
+.btn-primary{background:#e6f1fb;color:#185fa5;border-color:#b5d4f4}
+.result{margin-top:1rem;padding:0.75rem 1rem;border-radius:8px;font-size:15px;display:none}
+.result.correct{background:#eaf3de;color:#3b6d11}
+.result.wrong{background:#fcebeb;color:#a32d2d}
+.hint{font-size:13px;color:#888;margin-top:0.5rem;display:none}
+.nav{display:flex;gap:8px;margin-top:1rem}
+.progress{height:4px;background:#e0ddd5;border-radius:2px;margin-bottom:1.5rem}
+.progress-bar{height:4px;background:#378add;border-radius:2px;transition:width 0.3s}
+.filter-row{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.filter-btn{font-size:12px;padding:4px 12px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#888;cursor:pointer}
+.filter-btn.active{background:#e6f1fb;color:#185fa5;border-color:#b5d4f4}
+.complete{text-align:center;padding:2rem;display:none}
+.complete h3{font-size:20px;font-weight:500;margin-bottom:0.5rem}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h2>ます形 → て形 変換ドリル</h2>
+  <p>ます形からて形に変えてください。／請將ます形改為て形。</p>
+</div>
+
+<div class="filter-row">
+  <button class="filter-btn active" onclick="setFilter('all',this)">すべて／全部</button>
+  <button class="filter-btn" onclick="setFilter(1,this)">グループ1</button>
+  <button class="filter-btn" onclick="setFilter(2,this)">グループ2</button>
+  <button class="filter-btn" onclick="setFilter(3,this)">グループ3</button>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-label">問題数／題數</div><div class="stat-num" id="total-num">0</div></div>
+  <div class="stat"><div class="stat-label">正解／正確</div><div class="stat-num" id="correct-num" style="color:#3b6d11">0</div></div>
+  <div class="stat"><div class="stat-label">不正解／錯誤</div><div class="stat-num" id="wrong-num" style="color:#a32d2d">0</div></div>
+</div>
+
+<div class="progress"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+
+<div class="card" id="drill-card">
+  <div id="group-badge" class="group-badge g1"></div>
+  <div class="masu" id="masu-form"></div>
+  <div class="meaning" id="meaning"></div>
+  <div class="input-row">
+    <input type="text" id="answer-input" placeholder="て形を入力／輸入て形" onkeydown="if(event.key==='Enter')checkAnswer()">
+    <button class="btn btn-primary" onclick="checkAnswer()">確認</button>
+  </div>
+  <div class="hint" id="hint-text"></div>
+  <div class="result" id="result-box"></div>
+  <div class="nav">
+    <button class="btn" onclick="showHint()">ヒント／提示</button>
+    <button class="btn" onclick="nextQuestion()" id="next-btn" style="display:none">次へ／下一題</button>
+  </div>
+</div>
+
+<div class="complete" id="complete-box">
+  <h3>おつかれさまでした！／練習完成！</h3>
+  <p id="score-text" style="color:#888;margin-bottom:1.5rem;font-size:15px"></p>
+  <button class="btn btn-primary" onclick="restart()">もう一度／再次練習</button>
+</div>
+
+<script>
+const allVerbs=[
+  {masu:'書きます',te:'書いて',meaning:'書く／寫',group:1,hint:'き→いて'},
+  {masu:'聞きます',te:'聞いて',meaning:'聞く／聽',group:1,hint:'き→いて'},
+  {masu:'飲みます',te:'飲んで',meaning:'飲む／喝',group:1,hint:'み→んで'},
+  {masu:'読みます',te:'読んで',meaning:'読む／讀',group:1,hint:'み→んで'},
+  {masu:'話します',te:'話して',meaning:'話す／說話',group:1,hint:'し→して'},
+  {masu:'貸します',te:'貸して',meaning:'貸す／借出',group:1,hint:'し→して'},
+  {masu:'待ちます',te:'待って',meaning:'待つ／等',group:1,hint:'ち→って'},
+  {masu:'持ちます',te:'持って',meaning:'持つ／拿',group:1,hint:'ち→って'},
+  {masu:'買います',te:'買って',meaning:'買う／買',group:1,hint:'い→って'},
+  {masu:'会います',te:'会って',meaning:'会う／見面',group:1,hint:'い→って'},
+  {masu:'帰ります',te:'帰って',meaning:'帰る／回去',group:1,hint:'り→って'},
+  {masu:'乗ります',te:'乗って',meaning:'乗る／搭乘',group:1,hint:'り→って'},
+  {masu:'遊びます',te:'遊んで',meaning:'遊ぶ／玩',group:1,hint:'び→んで'},
+  {masu:'急ぎます',te:'急いで',meaning:'急ぐ／趕快',group:1,hint:'ぎ→いで'},
+  {masu:'脱ぎます',te:'脱いで',meaning:'脱ぐ／脫',group:1,hint:'ぎ→いで'},
+  {masu:'死にます',te:'死んで',meaning:'死ぬ／死',group:1,hint:'に→んで'},
+  {masu:'食べます',te:'食べて',meaning:'食べる／吃',group:2,hint:'ます→て'},
+  {masu:'見ます',te:'見て',meaning:'見る／看',group:2,hint:'ます→て'},
+  {masu:'起きます',te:'起きて',meaning:'起きる／起床',group:2,hint:'ます→て'},
+  {masu:'教えます',te:'教えて',meaning:'教える／教',group:2,hint:'ます→て'},
+  {masu:'覚えます',te:'覚えて',meaning:'覚える／記',group:2,hint:'ます→て'},
+  {masu:'開けます',te:'開けて',meaning:'開ける／開',group:2,hint:'ます→て'},
+  {masu:'閉めます',te:'閉めて',meaning:'閉める／關',group:2,hint:'ます→て'},
+  {masu:'出かけます',te:'出かけて',meaning:'出かける／外出',group:2,hint:'ます→て'},
+  {masu:'借ります',te:'借りて',meaning:'借りる／借入',group:2,hint:'ます→て'},
+  {masu:'降ります',te:'降りて',meaning:'降りる／下車',group:2,hint:'ます→て'},
+  {masu:'います',te:'いて',meaning:'いる／在',group:2,hint:'ます→て'},
+  {masu:'します',te:'して',meaning:'する／做',group:3,hint:'します→して'},
+  {masu:'来ます',te:'来て',meaning:'来る／來',group:3,hint:'来ます→来て'},
+];
+
+const groupLabels={1:'グループ１（u-verb）',2:'グループ２（ru-verb）',3:'グループ３（irregular）'};
+const groupClasses={1:'g1',2:'g2',3:'g3'};
+
+let verbs=[...allVerbs];
+let queue=[];
+let current=null;
+let totalAnswered=0;
+let correctCount=0;
+let wrongCount=0;
+let answered=false;
+let currentFilter='all';
+
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  restart();
+}
+
+function shuffle(arr){return arr.sort(()=>Math.random()-0.5)}
+
+function restart(){
+  if(currentFilter==='all') verbs=[...allVerbs];
+  else verbs=allVerbs.filter(v=>v.group===currentFilter);
+  queue=shuffle([...verbs]);
+  totalAnswered=0;correctCount=0;wrongCount=0;
+  updateStats();
+  document.getElementById('complete-box').style.display='none';
+  document.getElementById('drill-card').style.display='block';
+  document.getElementById('progress-bar').style.width='0%';
+  showQuestion();
+}
+
+function updateStats(){
+  document.getElementById('total-num').textContent=totalAnswered;
+  document.getElementById('correct-num').textContent=correctCount;
+  document.getElementById('wrong-num').textContent=wrongCount;
+}
+
+function showQuestion(){
+  if(queue.length===0){showComplete();return;}
+  current=queue.shift();
+  answered=false;
+  document.getElementById('masu-form').textContent=current.masu;
+  document.getElementById('meaning').textContent=current.meaning;
+  const badge=document.getElementById('group-badge');
+  badge.textContent=groupLabels[current.group];
+  badge.className='group-badge '+groupClasses[current.group];
+  document.getElementById('answer-input').value='';
+  document.getElementById('answer-input').disabled=false;
+  document.getElementById('result-box').style.display='none';
+  document.getElementById('hint-text').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('answer-input').focus();
+  const done=verbs.length-queue.length-1;
+  const pct=Math.round((done/verbs.length)*100);
+  document.getElementById('progress-bar').style.width=Math.max(0,pct)+'%';
+}
+
+function nextQuestion(){
+  if(!answered)return;
+  showQuestion();
+}
+
+function checkAnswer(){
+  if(answered)return;
+  const val=document.getElementById('answer-input').value.trim();
+  if(!val)return;
+  answered=true;
+  totalAnswered++;
+  const resultBox=document.getElementById('result-box');
+  resultBox.style.display='block';
+  document.getElementById('answer-input').disabled=true;
+  document.getElementById('next-btn').style.display='inline-block';
+  if(val===current.te){
+    correctCount++;
+    resultBox.className='result correct';
+    resultBox.textContent='正解！／正確！　'+current.te;
+  } else {
+    wrongCount++;
+    resultBox.className='result wrong';
+    resultBox.textContent='不正解。正解は：'+current.te+'　／　錯誤，正確答案是：'+current.te;
+  }
+  updateStats();
+}
+
+function showHint(){
+  const h=document.getElementById('hint-text');
+  h.style.display='block';
+  h.textContent='ヒント／提示：'+current.hint;
+}
+
+function showComplete(){
+  document.getElementById('drill-card').style.display='none';
+  document.getElementById('complete-box').style.display='block';
+  document.getElementById('progress-bar').style.width='100%';
+  const pct=verbs.length>0?Math.round((correctCount/verbs.length)*100):0;
+  document.getElementById('score-text').textContent=
+    verbs.length+'問中'+correctCount+'問正解　正答率'+pct+'%　／　'+verbs.length+'題中'+correctCount+'題正確，正確率'+pct+'%';
+}
+
+restart();
+</script>
+</body>
+</html>
