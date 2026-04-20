@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ます形 → ない形 変換ドリル</title>
+<title>ます形 → 辞書形 変換ドリル</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Hiragino Sans',sans-serif;background:#f5f4f0;color:#1a1a1a;padding:1.5rem;max-width:680px;margin:0 auto}
@@ -43,8 +43,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Hiragino Sans',san
 </head>
 <body>
 <div class="header">
-  <h2>ます形 → ない形 変換ドリル</h2>
-  <p>ます形からない形に変えてください。漢字・ひらがなどちらでも正解です。</p>
+  <h2>ます形 → 辞書形 変換ドリル</h2>
+  <p>ます形から辞書形に変えてください。漢字・ひらがなどちらでも正解です。</p>
 </div>
 <div class="filter-row">
   <button class="filter-btn active" onclick="setFilter('all',this)">すべて</button>
@@ -62,7 +62,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Hiragino Sans',san
   <div id="group-badge" class="group-badge g1"></div>
   <div class="masu" id="masu-form"></div>
   <div class="input-row">
-    <input type="text" id="answer-input" placeholder="ない形を入力" onkeydown="if(event.key==='Enter')checkAnswer()">
+    <input type="text" id="answer-input" placeholder="辞書形を入力" onkeydown="if(event.key==='Enter')checkAnswer()">
     <button class="btn btn-primary" onclick="checkAnswer()">確認</button>
   </div>
   <div class="hint" id="hint-text"></div>
@@ -79,44 +79,44 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Hiragino Sans',san
 </div>
 <script>
 const allVerbs=[
-  {masu:'書きます',nai:'書かない',hira:'かかない',group:1,hint:'き→か＋ない'},
-  {masu:'聞きます',nai:'聞かない',hira:'きかない',group:1,hint:'き→か＋ない'},
-  {masu:'泳ぎます',nai:'泳がない',hira:'およがない',group:1,hint:'ぎ→が＋ない'},
-  {masu:'急ぎます',nai:'急がない',hira:'いそがない',group:1,hint:'ぎ→が＋ない'},
-  {masu:'話します',nai:'話さない',hira:'はなさない',group:1,hint:'し→さ＋ない'},
-  {masu:'貸します',nai:'貸さない',hira:'かさない',group:1,hint:'し→さ＋ない'},
-  {masu:'待ちます',nai:'待たない',hira:'またない',group:1,hint:'ち→た＋ない'},
-  {masu:'持ちます',nai:'持たない',hira:'もたない',group:1,hint:'ち→た＋ない'},
-  {masu:'死にます',nai:'死なない',hira:'しなない',group:1,hint:'に→な＋ない'},
-  {masu:'飲みます',nai:'飲まない',hira:'のまない',group:1,hint:'み→ま＋ない'},
-  {masu:'読みます',nai:'読まない',hira:'よまない',group:1,hint:'み→ま＋ない'},
-  {masu:'遊びます',nai:'遊ばない',hira:'あそばない',group:1,hint:'び→ば＋ない'},
-  {masu:'呼びます',nai:'呼ばない',hira:'よばない',group:1,hint:'び→ば＋ない'},
-  {masu:'買います',nai:'買わない',hira:'かわない',group:1,hint:'い→わ＋ない'},
-  {masu:'会います',nai:'会わない',hira:'あわない',group:1,hint:'い→わ＋ない'},
-  {masu:'帰ります',nai:'帰らない',hira:'かえらない',group:1,hint:'り→ら＋ない'},
-  {masu:'乗ります',nai:'乗らない',hira:'のらない',group:1,hint:'り→ら＋ない'},
-  {masu:'分かります',nai:'分からない',hira:'わからない',group:1,hint:'り→ら＋ない'},
-  {masu:'送ります',nai:'送らない',hira:'おくらない',group:1,hint:'り→ら＋ない'},
-  {masu:'食べます',nai:'食べない',hira:'たべない',group:2,hint:'ます→ない'},
-  {masu:'見ます',nai:'見ない',hira:'みない',group:2,hint:'ます→ない'},
-  {masu:'起きます',nai:'起きない',hira:'おきない',group:2,hint:'ます→ない'},
-  {masu:'教えます',nai:'教えない',hira:'おしえない',group:2,hint:'ます→ない'},
-  {masu:'覚えます',nai:'覚えない',hira:'おぼえない',group:2,hint:'ます→ない'},
-  {masu:'開けます',nai:'開けない',hira:'あけない',group:2,hint:'ます→ない'},
-  {masu:'閉めます',nai:'閉めない',hira:'しめない',group:2,hint:'ます→ない'},
-  {masu:'出かけます',nai:'出かけない',hira:'でかけない',group:2,hint:'ます→ない'},
-  {masu:'借ります',nai:'借りない',hira:'かりない',group:2,hint:'ます→ない'},
-  {masu:'降ります',nai:'降りない',hira:'おりない',group:2,hint:'ます→ない'},
-  {masu:'います',nai:'いない',hira:'いない',group:2,hint:'ます→ない'},
-  {masu:'します',nai:'しない',hira:'しない',group:3,hint:'します→しない'},
-  {masu:'来ます',nai:'来ない',hira:'こない',group:3,hint:'来ます→来ない'},
+  {masu:'書きます',jisho:'書く',hira:'かく',group:1,hint:'い段→う段'},
+  {masu:'聞きます',jisho:'聞く',hira:'きく',group:1,hint:'い段→う段'},
+  {masu:'泳ぎます',jisho:'泳ぐ',hira:'およぐ',group:1,hint:'い段→う段'},
+  {masu:'急ぎます',jisho:'急ぐ',hira:'いそぐ',group:1,hint:'い段→う段'},
+  {masu:'話します',jisho:'話す',hira:'はなす',group:1,hint:'い段→う段'},
+  {masu:'貸します',jisho:'貸す',hira:'かす',group:1,hint:'い段→う段'},
+  {masu:'待ちます',jisho:'待つ',hira:'まつ',group:1,hint:'い段→う段'},
+  {masu:'持ちます',jisho:'持つ',hira:'もつ',group:1,hint:'い段→う段'},
+  {masu:'死にます',jisho:'死ぬ',hira:'しぬ',group:1,hint:'い段→う段'},
+  {masu:'飲みます',jisho:'飲む',hira:'のむ',group:1,hint:'い段→う段'},
+  {masu:'読みます',jisho:'読む',hira:'よむ',group:1,hint:'い段→う段'},
+  {masu:'遊びます',jisho:'遊ぶ',hira:'あそぶ',group:1,hint:'い段→う段'},
+  {masu:'呼びます',jisho:'呼ぶ',hira:'よぶ',group:1,hint:'い段→う段'},
+  {masu:'買います',jisho:'買う',hira:'かう',group:1,hint:'い段→う段'},
+  {masu:'会います',jisho:'会う',hira:'あう',group:1,hint:'い段→う段'},
+  {masu:'帰ります',jisho:'帰る',hira:'かえる',group:1,hint:'い段→う段'},
+  {masu:'乗ります',jisho:'乗る',hira:'のる',group:1,hint:'い段→う段'},
+  {masu:'分かります',jisho:'分かる',hira:'わかる',group:1,hint:'い段→う段'},
+  {masu:'送ります',jisho:'送る',hira:'おくる',group:1,hint:'い段→う段'},
+  {masu:'食べます',jisho:'食べる',hira:'たべる',group:2,hint:'ます→る'},
+  {masu:'見ます',jisho:'見る',hira:'みる',group:2,hint:'ます→る'},
+  {masu:'起きます',jisho:'起きる',hira:'おきる',group:2,hint:'ます→る'},
+  {masu:'教えます',jisho:'教える',hira:'おしえる',group:2,hint:'ます→る'},
+  {masu:'覚えます',jisho:'覚える',hira:'おぼえる',group:2,hint:'ます→る'},
+  {masu:'開けます',jisho:'開ける',hira:'あける',group:2,hint:'ます→る'},
+  {masu:'閉めます',jisho:'閉める',hira:'しめる',group:2,hint:'ます→る'},
+  {masu:'出かけます',jisho:'出かける',hira:'でかける',group:2,hint:'ます→る'},
+  {masu:'借ります',jisho:'借りる',hira:'かりる',group:2,hint:'ます→る'},
+  {masu:'降ります',jisho:'降りる',hira:'おりる',group:2,hint:'ます→る'},
+  {masu:'います',jisho:'いる',hira:'いる',group:2,hint:'ます→る'},
+  {masu:'します',jisho:'する',hira:'する',group:3,hint:'します→する'},
+  {masu:'来ます',jisho:'来る',hira:'くる',group:3,hint:'来ます→来る'},
 ];
 const groupLabels={1:'グループ１（u動詞）',2:'グループ２（ru動詞）',3:'グループ３（不規則）'};
 const groupClasses={1:'g1',2:'g2',3:'g3'};
 let verbs=[...allVerbs],queue=[],current=null;
 let totalAnswered=0,correctCount=0,wrongCount=0,answered=false,currentFilter='all';
-function isCorrect(val,v){return val===v.nai||val===v.hira;}
+function isCorrect(val,v){return val===v.jisho||val===v.hira;}
 function setFilter(f,btn){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');restart();}
 function shuffle(arr){return arr.sort(()=>Math.random()-0.5)}
 function restart(){
@@ -154,8 +154,8 @@ function checkAnswer(){
   const rb=document.getElementById('result-box');rb.style.display='block';
   document.getElementById('answer-input').disabled=true;
   document.getElementById('next-btn').style.display='inline-block';
-  if(isCorrect(val,current)){correctCount++;rb.className='result correct';rb.textContent='正解！　'+current.nai+'（'+current.hira+'）';}
-  else{wrongCount++;rb.className='result wrong';rb.textContent='不正解。正解：'+current.nai+'（'+current.hira+'）';}
+  if(isCorrect(val,current)){correctCount++;rb.className='result correct';rb.textContent='正解！　'+current.jisho+'（'+current.hira+'）';}
+  else{wrongCount++;rb.className='result wrong';rb.textContent='不正解。正解：'+current.jisho+'（'+current.hira+'）';}
   updateStats();
 }
 function showHint(){const h=document.getElementById('hint-text');h.style.display='block';h.textContent='ヒント：'+current.hint;}
